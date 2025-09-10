@@ -55,7 +55,7 @@ export default function Page() {
 
   const deleteC = async () => {
     if (selectedConsultant == null) return;
-    const { data, error } = await deleteConsultant(
+    const { error } = await deleteConsultant(
       selectedConsultant?.consultant_id as number
     );
 
@@ -70,7 +70,6 @@ export default function Page() {
             consultant.consultant_id !== selectedConsultant.consultant_id
         )
       );
-      console.log('Consultant deleted:', data);
       setIsModalOpen(false);
     }
   };

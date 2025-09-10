@@ -50,7 +50,7 @@ export default function Page() {
   const deleteC = async () => {
     if (selectedClient === null) return;
     const id = selectedClient.client_id as number;
-    const { data, error } = await deleteClient(id);
+    const { error } = await deleteClient(id);
     if (error) {
       setErrorDelete(true);
       console.error('Error deleting client:', error);
@@ -58,7 +58,6 @@ export default function Page() {
       setIsModalOpen(false);
       deleteStoreClient(id);
       setClients(clients?.filter((client) => client.client_id !== id));
-      console.log('Client deleted:', data);
     }
   };
 

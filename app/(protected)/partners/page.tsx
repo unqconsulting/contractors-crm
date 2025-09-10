@@ -50,13 +50,12 @@ export default function Page() {
 
   const deleteP = async () => {
     if (partner == null) return;
-    const { data, error } = await deletePartner(partner?.partner_id as number);
+    const { error } = await deletePartner(partner?.partner_id as number);
 
     if (error) {
       console.error('Error deleting partner:', error);
       setErrorDelete(true);
     } else {
-      console.log('Partner deleted:', data);
       deleteStorePartner(partner?.partner_id as number);
       setPartners(partners?.filter((p) => p.partner_id !== partner.partner_id));
       setIsModalOpen(false);

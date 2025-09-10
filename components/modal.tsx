@@ -65,13 +65,16 @@ export default function Modal({
                 <Button
                   onClick={onCancel}
                   variant="secondary"
-                  className="px-4 py-2 mr-2"
+                  className="px-4 py-2 mr-2 bg-gray-200 text-black hover:bg-gray-200/50"
                 >
                   Cancel
                 </Button>
               )}
               {showPrimaryButton && (
-                <Button onClick={onDelete} className="px-4 py-2 ">
+                <Button
+                  onClick={onDelete}
+                  className="px-4 py-2 bg-black text-white hover:bg-black/70"
+                >
                   Confirm
                 </Button>
               )}

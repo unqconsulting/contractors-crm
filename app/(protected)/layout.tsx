@@ -36,9 +36,7 @@ export default function RootLayout({
         const {
           data: { user },
         } = await supabase.auth.getUser();
-        console.log('user', user);
         setEmail(user?.email || null);
-        console.log('session', session);
         if (!session) {
           router.push('/auth/login');
         } else {

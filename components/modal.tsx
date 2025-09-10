@@ -25,6 +25,12 @@ export default function Modal({
   showSecondaryButton = true,
 }: ModalProps) {
   // Close modal when pressing Escape key
+
+  const secondaryButtonRef = (button: HTMLButtonElement | null) => {
+    if (button) {
+      button.focus();
+    }
+  };
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose();
@@ -65,7 +71,8 @@ export default function Modal({
                 <Button
                   onClick={onCancel}
                   variant="secondary"
-                  className="px-4 py-2 mr-2 bg-gray-200 text-black hover:bg-gray-200/50"
+                  className="px-4 py-2 mr-2 bg-gray-200 text-black hover:bg-gray-200/50 focus:outline-none focus:ring-1 focus:ring-black focus:ring-offset-2 focus-visible:ring-black"
+                  ref={secondaryButtonRef}
                 >
                   Cancel
                 </Button>
@@ -73,7 +80,7 @@ export default function Modal({
               {showPrimaryButton && (
                 <Button
                   onClick={onDelete}
-                  className="px-4 py-2 bg-black text-white hover:bg-black/70"
+                  className="px-4 py-2 bg-black text-white hover:bg-black/70 focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 focus-visible:ring-black"
                 >
                   Confirm
                 </Button>

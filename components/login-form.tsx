@@ -12,6 +12,7 @@ import {
 } from '@/components/ui/card';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { clearStores } from '@/app/utilities/helpers/helpers';
 
 export function LoginForm({
   className,
@@ -32,6 +33,7 @@ export function LoginForm({
           scopes: 'email',
         },
       });
+      clearStores();
       router.push('/');
     } catch (error: unknown) {
       setError(error instanceof Error ? error.message : 'An error occurred');

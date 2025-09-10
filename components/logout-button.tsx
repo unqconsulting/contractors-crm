@@ -3,14 +3,13 @@
 import { supabase } from '@/lib/supabase/supabaseClient';
 import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
-import { useAuthStore } from '@/app/core/stores/auth-store';
+import { clearStores } from '@/app/utilities/helpers/helpers';
 
 export function LogoutButton() {
   const router = useRouter();
-  const { clearAuth } = useAuthStore();
   const logout = async () => {
     await supabase.auth.signOut();
-    clearAuth();
+    clearStores();
     router.push('/auth/login');
   };
 

@@ -8,6 +8,7 @@ type ClientState = {
   deleteStoreClient: (clientId: number) => void;
   addStoreClient: (client: Client) => void;
   updateStoreClient: (client: Client) => void;
+  clearClients: () => void;
 };
 
 export const useClientStore = create(
@@ -31,6 +32,7 @@ export const useClientStore = create(
             c.client_id === client.client_id ? client : c
           ),
         })),
+      clearClients: () => set({ allClients: [] }),
     }),
     { name: 'client-storage' } // Key for localStorage
   )

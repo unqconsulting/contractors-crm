@@ -8,6 +8,7 @@ type PartnerState = {
   deleteStorePartner: (partnerId: number) => void;
   addStorePartner: (partner: Partner) => void;
   updateStorePartner: (partner: Partner) => void;
+  clearPartners: () => void;
 };
 
 export const usePartnerStore = create(
@@ -31,6 +32,7 @@ export const usePartnerStore = create(
             p.partner_id === partner.partner_id ? partner : p
           ),
         })),
+      clearPartners: () => set({ allPartners: [] }),
     }),
 
     { name: 'partner-storage' } // Key for localStorage

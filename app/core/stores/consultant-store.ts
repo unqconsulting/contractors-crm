@@ -10,6 +10,7 @@ type ConsultantState = {
   deleteStoreConsultant: (consultantId: number) => void;
   addStoreConsultant: (consultant: Consultant) => void;
   updateStoreConsultant: (consultant: Consultant) => void;
+  clearConsultants: () => void;
 };
 
 export const useConsultantStore = create(
@@ -35,6 +36,7 @@ export const useConsultantStore = create(
             c.consultant_id === consultant.consultant_id ? consultant : c
           ),
         })),
+      clearConsultants: () => set({ allConsultants: [], active: undefined }),
     }),
     { name: 'consult-storage' } // Key for localStorage
   )

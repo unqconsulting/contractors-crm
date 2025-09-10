@@ -18,6 +18,7 @@ type AssignmentState = {
   updateAssignmentConsultant: (consultant: Consultant) => void;
   updateAssignmentClient: (client: Client) => void;
   updateAssignmentPartner: (partner: Partner) => void;
+  clearAssignments: () => void;
 };
 
 export const useAssignmentStore = create(
@@ -68,6 +69,8 @@ export const useAssignmentStore = create(
           ),
         }));
       },
+      clearAssignments: () =>
+        set({ consultantAssignments: [], active: undefined }),
     }),
     { name: 'assignment-storage' } // Key for localStorage
   )

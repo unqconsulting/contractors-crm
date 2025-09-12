@@ -9,6 +9,9 @@ import CustomLink from '@/components/ui/link';
 import { LoadingSpinner } from '@/components/ui/spinner';
 import { getAssignmentMonth } from '@/app/utilities/helpers/helpers';
 import { useAssignmentStore } from '@/app/core/stores/assignment-store';
+import { useConsultantStore } from '@/app/core/stores/consultant-store';
+import { useClientStore } from '@/app/core/stores/client-store';
+import { usePartnerStore } from '@/app/core/stores/partner-store';
 
 export default function Page() {
   const [assignments, setAssignments] = useState<
@@ -18,11 +21,15 @@ export default function Page() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedAssignment, setSelectedAssignment] =
     useState<ConsultantAssignment | null>();
+
   const {
     consultantAssignments,
     setConsultantAssignments,
     deleteStoreAssignment,
   } = useAssignmentStore();
+  const { allConsultants } = useConsultantStore();
+  const { allClients } = useClientStore();
+  const { allPartners } = usePartnerStore();
 
   const columns = [
     'Consultant name',
@@ -58,27 +65,46 @@ export default function Page() {
     fetchConsultantsAssignments();
   }, [consultantAssignments, setConsultantAssignments, assignments]);
 
+  const getConsultantName = (id: number | undefined) => {
+    const consultant = allConsultants.find(
+      (consultant) => consultant.consultant_id === id
+    );
+    return consultant ? consultant.name : 'Unknown Consultant';
+  };
+
+  const getClientName = (id: number | undefined) => {
+    const client = allClients.find((client) => client.client_id === id);
+    return client ? client.name : 'Unknown Client';
+  };
+
+  const getPartnerName = (id: number | undefined) => {
+    const partner = allPartners.find((partner) => partner.partner_id === id);
+    return partner ? partner.name : 'Unknown Partner';
+  };
+
   const openModal = (rowIndex: number) => {
     setIsModalOpen(true);
     setSelectedAssignment(assignments ? assignments[rowIndex] : null);
   };
+
   assignments?.sort((a, b) => {
     if (a.month && b.month) {
-      if (a?.month > b?.month) {
+      if (+a?.month > +b?.month) {
         return 1;
-      } else if (a?.month === b?.month) return 0;
+      } else if (+a?.month === +b?.month) return 0;
     }
     return -1;
   });
+
   const rows = assignments
     ? assignments.map((assignment) => {
         return {
           id: assignment.assignment_id,
           detailsId: assignment.consultant_id,
           values: [
-            assignment.consultant?.name,
-            assignment.client?.name,
-            assignment.partner?.name,
+            getConsultantName(assignment.consultant_id),
+            getClientName(assignment.client_id),
+            getPartnerName(assignment.partner_id),
             assignment.cost_fulltime,
             assignment.hourly_rate,
             assignment.hours_worked,

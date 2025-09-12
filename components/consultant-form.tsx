@@ -48,7 +48,7 @@ export function ConsultantForm({ id }: { id?: number }) {
   const [consultants, setConsultants] = useState<Consultant[]>([]);
   const [duplicateError, setDuplicateError] = useState('');
 
-  const { addStoreConsultant, updateStoreConsultant } = useConsultantStore();
+  const { updateStoreConsultant } = useConsultantStore();
   const { updateAssignmentConsultant } = useAssignmentStore();
 
   const {
@@ -146,13 +146,11 @@ export function ConsultantForm({ id }: { id?: number }) {
 
       if (!id) {
         delete updatedConsultant.consultant_id;
-        const { data, error } = await createNewConsultant(
+        const { error } = await createNewConsultant(
           updatedConsultant as Consultant
         );
         if (error) {
           throw error;
-        } else {
-          addStoreConsultant(data as Consultant);
         }
       } else {
         const { data, error } = await updateConsultant(id, updatedConsultant);

@@ -42,8 +42,8 @@ export default function CreateOrUpdatePartnerOrClient({
   const errorMessage =
     (isPartner ? 'Partner ' : 'Client ') + 'with this name already exists';
 
-  const { addStorePartner, updateStorePartner } = usePartnerStore();
-  const { addStoreClient, updateStoreClient } = useClientStore();
+  const { updateStorePartner } = usePartnerStore();
+  const { updateStoreClient } = useClientStore();
   const { updateAssignmentClient, updateAssignmentPartner } =
     useAssignmentStore();
 
@@ -89,7 +89,7 @@ export default function CreateOrUpdatePartnerOrClient({
       return;
     }
 
-    const { data, error } = isPartner
+    const { error } = isPartner
       ? await createNewPartner(inputName)
       : await createNewClient(inputName);
 
@@ -97,10 +97,8 @@ export default function CreateOrUpdatePartnerOrClient({
       console.error('Error adding partner:', error);
     } else {
       if (isPartner) {
-        addStorePartner(data as Partner);
         router.push('/partners');
       } else {
-        addStoreClient(data as Client);
         router.push('/customers');
       }
     }

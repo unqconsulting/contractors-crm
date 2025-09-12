@@ -9,6 +9,14 @@ import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase/supabaseClient';
 import { useAuthStore } from '../core/stores/auth-store';
 import { LoadingSpinner } from '@/components/ui/spinner';
+import { usePartnerStore } from '../core/stores/partner-store';
+import { PartnerRealTimeChanges } from '../core/realtime-changes/partner-changes';
+import { ClientRealTimeChanges } from '../core/realtime-changes/client-changes';
+import { useClientStore } from '../core/stores/client-store';
+import { ConsultantRealTimeChanges } from '../core/realtime-changes/consultant-changes';
+import { useConsultantStore } from '../core/stores/consultant-store';
+import { ConsultantAssignmentRealTimeChanges } from '../core/realtime-changes/assignment-changes';
+import { useAssignmentStore } from '../core/stores/assignment-store';
 
 export default function RootLayout({
   children,
@@ -18,6 +26,30 @@ export default function RootLayout({
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const { setIsAuthenticated, setEmail } = useAuthStore();
+
+  const {
+    allPartners,
+    deleteStorePartner,
+    addStorePartner,
+    updateStorePartner,
+  } = usePartnerStore();
+
+  const { allClients, deleteStoreClient, addStoreClient, updateStoreClient } =
+    useClientStore();
+
+  const {
+    allConsultants,
+    deleteStoreConsultant,
+    addStoreConsultant,
+    updateStoreConsultant,
+  } = useConsultantStore();
+
+  const {
+    consultantAssignments,
+    deleteStoreAssignment,
+    addAssignment,
+    updateAssignment,
+  } = useAssignmentStore();
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -65,6 +97,66 @@ export default function RootLayout({
     // Cleanup subscription
     return () => subscription.unsubscribe();
   }, [router]);
+
+  useEffect(() => {
+    // Create separate channels for each subscription
+    const partnerChannel = supabase.channel('partner-changes');
+    const clientChannel = supabase.channel('client-changes');
+    const consultantChannel = supabase.channel('consultant-changes');
+    const assignmentChannel = supabase.channel('assignment-changes');
+
+    PartnerRealTimeChanges(
+      partnerChannel,
+      {
+        deleteStorePartner,
+        addStorePartner,
+        updateStorePartner,
+      },
+      allPartners
+    );
+    ClientRealTimeChanges(
+      clientChannel,
+      {
+        deleteStoreClient,
+        addStoreClient,
+        updateStoreClient,
+      },
+      allClients
+    );
+    ConsultantRealTimeChanges(
+      consultantChannel,
+      {
+        deleteStoreConsultant,
+        addStoreConsultant,
+        updateStoreConsultant,
+      },
+      allConsultants
+    );
+    ConsultantAssignmentRealTimeChanges(
+      assignmentChannel,
+      {
+        deleteStoreAssignment,
+        addAssignment,
+        updateAssignment,
+      },
+      consultantAssignments
+    );
+
+    // Subscribe all channels
+    partnerChannel.subscribe();
+    clientChannel.subscribe();
+    consultantChannel.subscribe();
+    assignmentChannel.subscribe();
+
+    // Cleanup all channels
+    return () => {
+      supabase.removeChannel(partnerChannel);
+      supabase.removeChannel(clientChannel);
+      supabase.removeChannel(consultantChannel);
+      supabase.removeChannel(assignmentChannel);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   if (loading) {
     return <LoadingSpinner />;

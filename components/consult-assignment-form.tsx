@@ -52,7 +52,7 @@ export function UpdateOrCreateConsultantAssignment({
     monthError: string;
   }>({ clientError: '', consultantError: '', monthError: '' });
 
-  const { addAssignment, updateAssignment } = useAssignmentStore();
+  const { updateAssignment } = useAssignmentStore();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -140,13 +140,10 @@ export function UpdateOrCreateConsultantAssignment({
     setLoading(true);
     const copy = { ...consultAssignment };
     if (create || !id) {
-      const { data, error } = await createNewConsultantAssignment(
+      const { error } = await createNewConsultantAssignment(
         copy as ConsultantAssignment
       );
-      if (!error) {
-        consultAssignment.assignment_id = data.assignment_id;
-        addAssignment(consultAssignment as ConsultantAssignment);
-      }
+
       handleRespone(error);
     } else {
       const { error } = await updateConsultantAssignment(

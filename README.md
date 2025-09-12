@@ -7,64 +7,109 @@
 </p>
 <br/>
 
+# Contractors CRM
+
+A modern CRM application for managing consultants, assignments, customers, and partners. Built with [Next.js](https://nextjs.org), [Supabase](https://supabase.com), and [Tailwind CSS](https://tailwindcss.com).
+
+---
+
 ## Features
 
-- Works across the entire [Next.js](https://nextjs.org) stack
-  - App Router
-  - Pages Router
-  - Middleware
-  - Client
-  - Server
-  - It just works!
-- supabase-ssr. A package to configure Supabase Auth to use cookies
-- Azure-based authentication block installed via the [Supabase UI Library](https://supabase.com/docs/guides/auth/social-login/auth-azure?queryGroups=environment&environment=client)
-- Styling with [Tailwind CSS](https://tailwindcss.com)
+- Next.js App Router structure
+- Supabase authentication and data management
+- Azure-based social login via Supabase UI
+- Styled with Tailwind CSS and [shadcn/ui](https://ui.shadcn.com)
+- Modular components and utilities
+- State management with Zustand
+
+---
 
 ## Demo
 
-You can view a fully working demo at [danielstest-d4d6c7ecdxbjc0a4.swedencentral-01.azurewebsites.net](https://danielstest-d4d6c7ecdxbjc0a4.swedencentral-01.azurewebsites.net).
+Try the live demo:  
+https://lively-ocean-0eed29103.1.azurestaticapps.net (DEV site) or
+https://polite-river-0f3229403.1.azurestaticapps.net (PROD site)
 
-## Clone and run locally
+---
 
-1. You'll first need a Supabase project which can be made [via the Supabase dashboard](https://database.new)
+## Getting Started
 
-2. Create a Next.js app using the Supabase Starter template npx command
+### 1. Prerequisites
 
-   ```bash
-   npx create-next-app --example with-supabase with-supabase-app
-   ```
+- Node.js (v18+ recommended)
+- npm, yarn, or pnpm
 
-   ```bash
-   yarn create next-app --example with-supabase with-supabase-app
-   ```
+### 2. Clone the repository
 
-   ```bash
-   pnpm create next-app --example with-supabase with-supabase-app
-   ```
+```sh
+git clone https://github.com/your-username/contractors-crm.git
+cd contractors-crm
+```
 
-3. Use `cd` to change into the app's directory
+### 3. Set up Supabase
 
-   ```bash
-   cd with-supabase-app
-   ```
+- Create a Supabase project: [Supabase dashboard](https://database.new)
+- Copy your Supabase URL and Anon Key from your project's API settings.
 
-4. Rename `.env.example` to `.env.local` and update the following:
+### 4. Configure environment variables
 
-   ```
-   NEXT_PUBLIC_SUPABASE_URL=[INSERT SUPABASE PROJECT URL]
-   NEXT_PUBLIC_SUPABASE_ANON_KEY=[INSERT SUPABASE PROJECT API ANON KEY]
-   ```
+Rename `.env.example` to `.env.local` and add:
 
-   Both `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` can be found in [your Supabase project's API settings](https://supabase.com/dashboard/project/_?showConnect=true)
+```
+NEXT_PUBLIC_SUPABASE_URL=your-supabase-url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+```
 
-5. You can now run the Next.js local development server:
+### 5. Install dependencies
 
-   ```bash
-   npm run dev
-   ```
+```sh
+npm install
+```
 
-   The starter kit should now be running on [localhost:3000](http://localhost:3000/).
+### 6. Run the development server
 
-6. This template comes with the default shadcn/ui style initialized. If you instead want other ui.shadcn styles, delete `components.json` and [re-install shadcn/ui](https://ui.shadcn.com/docs/installation/next)
+```sh
+npm run dev
+```
 
-> Check out [the docs for Local Development](https://supabase.com/docs/guides/getting-started/local-development) to also run Supabase locally.
+Visit [localhost:3000](http://localhost:3000) in your browser.
+
+---
+
+## Project Structure
+
+- `app/` – Main Next.js app, routes, layouts, and pages
+- `components/` – Reusable UI and form components
+- `lib/` – Supabase clients and utilities
+- `app/core/` – Commands, queries, stores, types for business logic
+- `app/utilities/` – Helper functions
+
+---
+
+## Styling
+
+- Uses Tailwind CSS (`globals.css`, `tailwind.config.ts`)
+- UI components from [shadcn/ui](https://ui.shadcn.com)
+- Easily customizable themes (light/dark)
+
+---
+
+## Scripts
+
+- `npm run dev` – Start development server
+- `npm run build` – Build for production
+- `npm run start` – Start production server
+- `npm run lint` – Run ESLint
+
+---
+
+## Feedback & Issues
+
+Feel free to open issues or contribute via pull requests.
+
+---
+
+## More Examples
+
+- [Supabase Next.js Examples](https://supabase.com/docs/guides/getting-started/local-development)
+- [shadcn/ui Documentation](https://ui.shadcn.com/docs/installation/next)

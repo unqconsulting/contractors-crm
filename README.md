@@ -1,7 +1,7 @@
 <p align="center">
   <a href="#features"><strong>Features</strong></a> ·
   <a href="#demo"><strong>Demo</strong></a> ·
-  <a href="#clone-and-run-locally"><strong>Clone and run locally</strong></a> ·
+  <a href="#clone"><strong>Clone and run locally</strong></a> ·
   <a href="#more-supabase-examples"><strong>More Examples</strong></a>
 </p>
 <br/>
@@ -38,7 +38,7 @@ https://polite-river-0f3229403.1.azurestaticapps.net (PROD site)
 - Node.js (v18+ recommended)
 - npm, yarn, or pnpm
 
-## Clone-and-run-locally
+## Clone
 
 ### 2. Clone the repository
 

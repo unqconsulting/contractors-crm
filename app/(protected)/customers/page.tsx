@@ -16,22 +16,23 @@ export default function Page() {
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedClient, setSelectedClient] = useState<Client | null>(null);
-  const { allClients, setAllClients, deleteStoreClient } = useClientStore();
+  const { setAllClients, deleteStoreClient } = useClientStore();
   const [errorDelete, setErrorDelete] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchClients = async () => {
-      if ((!allClients || allClients.length === 0) && !clients) {
-        const clients = await getClients();
-        setClients(clients);
-        setAllClients(clients);
-      } else {
-        setClients(allClients);
-      }
+      // if ((!allClients || allClients.length === 0) && !clients) {
+      const clients = await getClients();
+      setClients(clients);
+      setAllClients(clients);
+      // } else {
+      //   setClients(allClients);
+      // }
       setLoading(false);
     };
     fetchClients();
-  }, [allClients, setAllClients, clients]);
+  }, []);
+
   if (clients) sortByName(clients);
 
   const rows = clients
@@ -47,6 +48,7 @@ export default function Page() {
     setIsModalOpen(true);
     setSelectedClient(clients ? clients[rowIndex] : null);
   };
+
   const deleteC = async () => {
     if (selectedClient === null) return;
     const id = selectedClient.client_id as number;

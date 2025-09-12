@@ -14,7 +14,6 @@ export const ConsultantRealTimeChanges = (
     'postgres_changes',
     { event: '*', schema: 'public', table: 'Consultants' },
     (payload) => {
-      debugger;
       if (payload.eventType === 'DELETE') {
         const deletedConsultantId = payload.old.consultant_id;
         callbacks.deleteStoreConsultant(deletedConsultantId);

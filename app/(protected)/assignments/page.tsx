@@ -23,7 +23,7 @@ export default function Page() {
     useState<ConsultantAssignment | null>();
 
   const {
-    consultantAssignments,
+    // consultantAssignments,
     setConsultantAssignments,
     deleteStoreAssignment,
   } = useAssignmentStore();
@@ -46,24 +46,25 @@ export default function Page() {
 
   useEffect(() => {
     const fetchConsultantsAssignments = async () => {
-      if (
-        (!consultantAssignments || consultantAssignments.length === 0) &&
-        !assignments
-      ) {
-        const { data: assignments, error } = await getConsultantsAssignments();
-        if (error) {
-          console.error('Error fetching assignments:', error);
-        } else {
-          setAssignments(assignments);
-          setConsultantAssignments(assignments);
-        }
+      // if (
+      //   (!consultantAssignments || consultantAssignments.length === 0) &&
+      //   !assignments
+      // ) {
+      const { data: assignments, error } = await getConsultantsAssignments();
+      if (error) {
+        console.error('Error fetching assignments:', error);
       } else {
-        setAssignments(consultantAssignments);
+        setAssignments(assignments);
+        setConsultantAssignments(assignments);
       }
+      // }
+      // else {
+      //   setAssignments(consultantAssignments);
+      // }
       setLoading(false);
     };
     fetchConsultantsAssignments();
-  }, [consultantAssignments, setConsultantAssignments, assignments]);
+  }, []);
 
   const getConsultantName = (id: number | undefined) => {
     const consultant = allConsultants.find(

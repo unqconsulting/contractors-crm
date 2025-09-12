@@ -19,22 +19,21 @@ export default function Page() {
   const [selectedConsultant, setSelectedConsultant] =
     useState<Consultant | null>();
   const [errorDelete, setErrorDelete] = useState<boolean>(false);
-  const { allConsultants, setAllConsultants, deleteStoreConsultant } =
-    useConsultantStore();
+  const { setAllConsultants, deleteStoreConsultant } = useConsultantStore();
 
   useEffect(() => {
     const fetch = async () => {
-      if ((!allConsultants || allConsultants.length === 0) && !consultants) {
-        const consultants = await getConsultants();
-        setConsultants(consultants);
-        setAllConsultants(consultants);
-      } else {
-        setConsultants(allConsultants);
-      }
+      // if ((!allConsultants || allConsultants.length === 0) && !consultants) {
+      const consultants = await getConsultants();
+      setConsultants(consultants);
+      setAllConsultants(consultants);
+      // } else {
+      //   setConsultants(allConsultants);
+      // }
       setLoading(false);
     };
     fetch();
-  }, [allConsultants, setAllConsultants, consultants]);
+  }, []);
 
   const columns = ['Name', 'Phone number', 'Email'];
   if (consultants) {

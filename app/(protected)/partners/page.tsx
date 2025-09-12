@@ -20,13 +20,13 @@ export default function Page() {
 
   useEffect(() => {
     const fetchPartners = async () => {
-      if ((!allPartners || allPartners.length === 0) && !partners) {
-        const partners = await getPartners();
-        setPartners(partners);
-        setAllPartners(partners);
-      } else {
-        setPartners(allPartners);
-      }
+      // if ((!allPartners || allPartners.length === 0) && !partners) {
+      const partners = await getPartners();
+      setPartners(partners);
+      setAllPartners(partners);
+      // } else {
+      //   setPartners(allPartners);
+      // }
       setLoading(false);
     };
     fetchPartners();

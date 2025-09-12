@@ -96,7 +96,7 @@ export function UpdateOrCreateConsultantAssignment({
     };
 
     fetchData();
-  }, [id]);
+  }, []);
 
   const optionMonths = getOptionMonths();
   const choosenMonth = optionMonths.find(

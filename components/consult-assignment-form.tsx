@@ -77,6 +77,7 @@ export function UpdateOrCreateConsultantAssignment({
           label: c.name,
         };
       });
+
       setConsultants(consultants);
       const clients = (await getClients()).map((c) => {
         return {

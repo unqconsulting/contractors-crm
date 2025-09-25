@@ -20,7 +20,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className="font-poppins antialiased">
+      <body className="font-poppins">
         <ThemeProvider
           attribute="class"
           defaultTheme="system"

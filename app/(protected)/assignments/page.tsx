@@ -8,10 +8,8 @@ import { CustomTable } from '@/components/custom-table';
 import CustomLink from '@/components/ui/link';
 import { LoadingSpinner } from '@/components/ui/spinner';
 import { getAssignmentMonth } from '@/app/utilities/helpers/helpers';
-import { useAssignmentStore } from '@/app/core/stores/assignment-store';
-import { useConsultantStore } from '@/app/core/stores/consultant-store';
-import { useClientStore } from '@/app/core/stores/client-store';
-import { usePartnerStore } from '@/app/core/stores/partner-store';
+import { useRouter } from 'next/navigation';
+import { useAuth } from '@/app/providers/authProvider';
 
 export default function Page() {
   const [assignments, setAssignments] = useState<
@@ -21,16 +19,8 @@ export default function Page() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedAssignment, setSelectedAssignment] =
     useState<ConsultantAssignment | null>();
-
-  const {
-    // consultantAssignments,
-    setConsultantAssignments,
-    deleteStoreAssignment,
-  } = useAssignmentStore();
-  const { allConsultants } = useConsultantStore();
-  const { allClients } = useClientStore();
-  const { allPartners } = usePartnerStore();
-
+  const { user } = useAuth();
+  const router = useRouter();
   const columns = [
     'Consultant name',
     'Client',
@@ -45,43 +35,23 @@ export default function Page() {
   ];
 
   useEffect(() => {
+    let ignore = false;
     const fetchConsultantsAssignments = async () => {
-      // if (
-      //   (!consultantAssignments || consultantAssignments.length === 0) &&
-      //   !assignments
-      // ) {
+      if (!user) router.push('/auth/login');
       const { data: assignments, error } = await getConsultantsAssignments();
       if (error) {
         console.error('Error fetching assignments:', error);
       } else {
+        if (ignore) return;
         setAssignments(assignments);
-        setConsultantAssignments(assignments);
       }
-      // }
-      // else {
-      //   setAssignments(consultantAssignments);
-      // }
       setLoading(false);
     };
     fetchConsultantsAssignments();
-  }, []);
-
-  const getConsultantName = (id: number | undefined) => {
-    const consultant = allConsultants.find(
-      (consultant) => consultant.consultant_id === id
-    );
-    return consultant ? consultant.name : 'Unknown Consultant';
-  };
-
-  const getClientName = (id: number | undefined) => {
-    const client = allClients.find((client) => client.client_id === id);
-    return client ? client.name : 'Unknown Client';
-  };
-
-  const getPartnerName = (id: number | undefined) => {
-    const partner = allPartners.find((partner) => partner.partner_id === id);
-    return partner ? partner.name : 'Unknown Partner';
-  };
+    return () => {
+      ignore = true;
+    };
+  }, [router, user]);
 
   const openModal = (rowIndex: number) => {
     setIsModalOpen(true);
@@ -103,9 +73,9 @@ export default function Page() {
           id: assignment.assignment_id,
           detailsId: assignment.consultant_id,
           values: [
-            getConsultantName(assignment.consultant_id),
-            getClientName(assignment.client_id),
-            getPartnerName(assignment.partner_id),
+            assignment.consultant?.name,
+            assignment.client?.name,
+            assignment.partner?.name,
             assignment.cost_fulltime,
             assignment.hourly_rate,
             assignment.hours_worked,
@@ -127,7 +97,6 @@ export default function Page() {
     if (error) {
       console.error('Error deleting assigment:', error);
     } else {
-      deleteStoreAssignment(selectedAssignment.assignment_id as number);
       setAssignments(
         assignments?.filter(
           (assignment) =>

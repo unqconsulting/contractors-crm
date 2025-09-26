@@ -1,4 +1,12 @@
+'use client';
+import { useRouter } from 'next/navigation';
+import { useAuth } from '../providers/authProvider';
+
 export default function Home() {
+  const { user } = useAuth();
+  const router = useRouter();
+
+  if (!user) router.push('/auth/login');
   return (
     <>
       <div className="flex justify-center items-center flex-col">

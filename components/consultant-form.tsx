@@ -23,8 +23,6 @@ import {
   getConsultantById,
   getConsultants,
 } from '@/app/core/queries/consultant-queries';
-import { useConsultantStore } from '@/app/core/stores/consultant-store';
-import { useAssignmentStore } from '@/app/core/stores/assignment-store';
 
 const formSchema = z.object({
   email: z.email('Invalid email address'),
@@ -47,9 +45,6 @@ export function ConsultantForm({ id }: { id?: number }) {
   );
   const [consultants, setConsultants] = useState<Consultant[]>([]);
   const [duplicateError, setDuplicateError] = useState('');
-
-  const { updateStoreConsultant } = useConsultantStore();
-  const { updateAssignmentConsultant } = useAssignmentStore();
 
   const {
     register,
@@ -153,12 +148,9 @@ export function ConsultantForm({ id }: { id?: number }) {
           throw error;
         }
       } else {
-        const { data, error } = await updateConsultant(id, updatedConsultant);
+        const { error } = await updateConsultant(id, updatedConsultant);
         if (error) {
           throw error;
-        } else {
-          updateAssignmentConsultant(data as Consultant);
-          updateStoreConsultant(data as Consultant);
         }
       }
 

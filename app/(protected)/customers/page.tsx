@@ -9,29 +9,33 @@ import { CustomTable } from '@/components/custom-table';
 import CustomLink from '@/components/ui/link';
 import { LoadingSpinner } from '@/components/ui/spinner';
 import { sortByName } from '@/app/utilities/helpers/helpers';
-import { useClientStore } from '@/app/core/stores/client-store';
+import { useAuth } from '@/app/providers/authProvider';
+import { useRouter } from 'next/navigation';
 
 export default function Page() {
   const [clients, setClients] = useState<Client[] | undefined>(undefined);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedClient, setSelectedClient] = useState<Client | null>(null);
-  const { setAllClients, deleteStoreClient } = useClientStore();
   const [errorDelete, setErrorDelete] = useState<boolean>(false);
+  const { user } = useAuth();
+  const router = useRouter();
 
   useEffect(() => {
+    let ignore = false;
     const fetchClients = async () => {
-      // if ((!allClients || allClients.length === 0) && !clients) {
+      if (!user) router.push('/auth/login');
       const clients = await getClients();
+      if (ignore) return;
       setClients(clients);
-      setAllClients(clients);
-      // } else {
-      //   setClients(allClients);
-      // }
+
       setLoading(false);
     };
     fetchClients();
-  }, []);
+    return () => {
+      ignore = true;
+    };
+  }, [router, user]);
 
   if (clients) sortByName(clients);
 
@@ -58,7 +62,6 @@ export default function Page() {
       console.error('Error deleting client:', error);
     } else {
       setIsModalOpen(false);
-      deleteStoreClient(id);
       setClients(clients?.filter((client) => client.client_id !== id));
     }
   };

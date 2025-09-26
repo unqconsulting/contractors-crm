@@ -8,7 +8,8 @@ import { CustomTable } from '@/components/custom-table';
 import CustomLink from '@/components/ui/link';
 import { LoadingSpinner } from '@/components/ui/spinner';
 import { sortByName } from '@/app/utilities/helpers/helpers';
-import { usePartnerStore } from '@/app/core/stores/partner-store';
+import { useAuth } from '@/app/providers/authProvider';
+import { useRouter } from 'next/navigation';
 
 export default function Page() {
   const [partners, setPartners] = useState<Partner[] | undefined>(undefined);
@@ -16,21 +17,19 @@ export default function Page() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [partner, setSelectedPartner] = useState<Partner | null>();
   const [errorDelete, setErrorDelete] = useState<boolean>(false);
-  const { allPartners, setAllPartners, deleteStorePartner } = usePartnerStore();
+  const { user } = useAuth();
+  const router = useRouter();
 
   useEffect(() => {
     const fetchPartners = async () => {
-      // if ((!allPartners || allPartners.length === 0) && !partners) {
+      if (!user) router.push('/auth/login');
       const partners = await getPartners();
       setPartners(partners);
-      setAllPartners(partners);
-      // } else {
-      //   setPartners(allPartners);
-      // }
+
       setLoading(false);
     };
     fetchPartners();
-  }, [allPartners, setAllPartners, partners]);
+  }, [router, user]);
 
   if (partners) sortByName(partners);
 
@@ -56,7 +55,6 @@ export default function Page() {
       console.error('Error deleting partner:', error);
       setErrorDelete(true);
     } else {
-      deleteStorePartner(partner?.partner_id as number);
       setPartners(partners?.filter((p) => p.partner_id !== partner.partner_id));
       setIsModalOpen(false);
     }

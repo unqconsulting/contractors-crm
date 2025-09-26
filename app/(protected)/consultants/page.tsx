@@ -8,7 +8,8 @@ import { CustomTable } from '@/components/custom-table';
 import CustomLink from '@/components/ui/link';
 import { LoadingSpinner } from '@/components/ui/spinner';
 import { sortByName } from '@/app/utilities/helpers/helpers';
-import { useConsultantStore } from '@/app/core/stores/consultant-store';
+import { useAuth } from '@/app/providers/authProvider';
+import { useRouter } from 'next/navigation';
 
 export default function Page() {
   const [consultants, setConsultants] = useState<Consultant[] | undefined>(
@@ -19,21 +20,25 @@ export default function Page() {
   const [selectedConsultant, setSelectedConsultant] =
     useState<Consultant | null>();
   const [errorDelete, setErrorDelete] = useState<boolean>(false);
-  const { setAllConsultants, deleteStoreConsultant } = useConsultantStore();
+  const { user } = useAuth();
+  const router = useRouter();
 
   useEffect(() => {
+    let ignore = false;
     const fetch = async () => {
-      // if ((!allConsultants || allConsultants.length === 0) && !consultants) {
+      if (!user) router.push('/auth/login');
       const consultants = await getConsultants();
-      setConsultants(consultants);
-      setAllConsultants(consultants);
-      // } else {
-      //   setConsultants(allConsultants);
-      // }
+      if (!ignore) {
+        setConsultants(consultants);
+      }
+
       setLoading(false);
     };
     fetch();
-  }, []);
+    return () => {
+      ignore = true;
+    };
+  }, [router, user]);
 
   const columns = ['Name', 'Phone number', 'Email'];
   if (consultants) {
@@ -62,7 +67,6 @@ export default function Page() {
       setErrorDelete(true);
       console.error('Error deleting consultant:', error);
     } else {
-      deleteStoreConsultant(selectedConsultant.consultant_id as number);
       setConsultants(
         consultants?.filter(
           (consultant) =>

@@ -23,7 +23,6 @@ import Dropdown from './ui/dropdown';
 import CustomLink from './ui/link';
 import { LoadingSpinner } from './ui/spinner';
 import { PostgrestError } from '@supabase/supabase-js';
-import { useAssignmentStore } from '@/app/core/stores/assignment-store';
 
 export function UpdateOrCreateConsultantAssignment({
   id,
@@ -51,8 +50,6 @@ export function UpdateOrCreateConsultantAssignment({
     consultantError: string;
     monthError: string;
   }>({ clientError: '', consultantError: '', monthError: '' });
-
-  const { updateAssignment } = useAssignmentStore();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -151,7 +148,6 @@ export function UpdateOrCreateConsultantAssignment({
         copy as ConsultantAssignment
       );
       if (!error) {
-        updateAssignment(consultAssignment as ConsultantAssignment);
       }
       handleRespone(error);
     }

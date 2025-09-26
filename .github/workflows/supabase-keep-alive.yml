@@ -2,7 +2,7 @@ name: Keep Supabase Alive
 
 on:
   schedule:
-    - cron: '0 12 */4 * *' # Kör kl 12:00 var 4:e dag
+    - cron: "0 12 */4 * *" # Kör kl 12:00 var 4:e dag
   workflow_dispatch: # Möjlighet att köra manuellt
 
 jobs:
@@ -11,6 +11,6 @@ jobs:
     steps:
       - name: Ping Supabase REST API
         run: |
-          curl -s -X GET "https://${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}.supabase.co/rest/v1/" \
+          curl -s -X GET "https://${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}.supabase.co/rest/v1/Clients?select=*" \
           -H "apikey: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}" \
           -H "Content-Type: application/json"

@@ -11,6 +11,6 @@ jobs:
     steps:
       - name: Ping Supabase REST API
         run: |
-          curl -s -X GET "https://${{ secrets.DEV_NEXT_PUBLIC_SUPABASE_URL }}.supabase.co/Clients?select=*" \
+          curl -s -X GET "https://${{ secrets.DEV_NEXT_PUBLIC_SUPABASE_URL }}.supabase.co/rest/v1/Clients?select=*" \
           -H "apikey: ${{ secrets.DEV_NEXT_PUBLIC_SUPABASE_ANON_KEY }}" \
           -H "Content-Type: application/json"

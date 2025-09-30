@@ -1,181 +1,23 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import { useRouter } from 'next/navigation';
 import { Input } from '@/components/ui/input';
-import { useEffect, useState } from 'react';
-import {
-  createNewConsultant,
-  updateConsultant,
-} from '@/app/core/commands/consultants-commands';
 import CustomLink from './ui/link';
 import { LoadingSpinner } from './ui/spinner';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-// import { getConsultantById } from '@/app/core/queries/consultant-queries';
-import { Consultant } from '@/app/core/types/types';
-import {
-  checkName,
-  createConsultantObject,
-} from '@/app/utilities/helpers/helpers';
-import {
-  getConsultantById,
-  getConsultants,
-} from '@/app/core/queries/consultant-queries';
-
-const formSchema = z.object({
-  email: z.email('Invalid email address'),
-  phone: z
-    .string()
-    .min(10, 'Phone number must be at least 10 digits')
-    .regex(
-      /^(\+\d{1,3}[- ]?)?\d{10}$/,
-      'Invalid phone number format (e.g., 1234567890 or +11234567890)'
-    ),
-});
-
-type FormData = z.infer<typeof formSchema>;
+import { useConsultantForm } from '@/app/hooks/useConsultantForm';
 
 export function ConsultantForm({ id }: { id?: number }) {
-  const router = useRouter();
-  const [loading, setLoading] = useState(false);
-  const [consultant, setConsultant] = useState<Consultant>(
-    createConsultantObject()
-  );
-  const [consultants, setConsultants] = useState<Consultant[]>([]);
-  const [duplicateError, setDuplicateError] = useState('');
-
   const {
+    loading,
+    duplicateError,
+    createOrUpdate,
+    handleInputChange,
     register,
+    errors,
+    isSubmitted,
     handleSubmit,
-    formState: { errors, isSubmitted },
-    setValue,
-    trigger,
-    reset,
-  } = useForm<FormData>({
-    resolver: zodResolver(formSchema),
-    shouldUnregister: false,
-    mode: 'onChange', // Changed from onTouched to onChange
-  });
-
-  // Handle autofill detection
-  useEffect(() => {
-    const checkAutofill = () => {
-      const emailInput = document.getElementById('email') as HTMLInputElement;
-      const phoneInput = document.getElementById(
-        'phone-number'
-      ) as HTMLInputElement;
-
-      // Check if inputs have autofilled values
-      if (emailInput?.value && emailInput.matches(':-webkit-autofill')) {
-        setValue('email', emailInput.value);
-        trigger('email');
-      }
-      if (phoneInput?.value && phoneInput.matches(':-webkit-autofill')) {
-        setValue('phone', phoneInput.value);
-        trigger('phone');
-      }
-    };
-
-    // Run immediately and after a short delay
-    checkAutofill();
-    const timer = setTimeout(checkAutofill, 300);
-
-    return () => clearTimeout(timer);
-  }, [setValue, trigger]);
-
-  // // Update form values when consultant changes
-  useEffect(() => {
-    if (consultant) {
-      setValue('email', consultant.email || '');
-      setValue('phone', consultant.phone || '');
-    }
-  }, [consultant, setValue]);
-
-  useEffect(() => {
-    const fetchAll = async () => {
-      const consultants = await getConsultants();
-      setConsultants(consultants);
-    };
-
-    fetchAll();
-  }, []);
-
-  useEffect(() => {
-    const fetchConsultant = async () => {
-      if (id) {
-        setLoading(true);
-        const { data, error } = await getConsultantById(id as number);
-        if (error) {
-          console.error('Error fetching consultant:', error);
-        } else {
-          setConsultant(data);
-        }
-        setLoading(false);
-      }
-    };
-    fetchConsultant();
-  }, [id]);
-
-  const createOrUpdate = async (formData: FormData) => {
-    const ConsultantError = checkName(
-      consultants,
-      consultant.name as string
-    ) as Consultant;
-    if (
-      ConsultantError &&
-      ConsultantError.consultant_id !== consultant.consultant_id
-    ) {
-      setDuplicateError('Consultant with this name already exists');
-      return;
-    }
-    setLoading(true);
-    try {
-      const updatedConsultant = {
-        ...consultant,
-        name: consultant.name?.trim(),
-        email: formData.email,
-        phone: formData.phone,
-      };
-
-      if (!id) {
-        delete updatedConsultant.consultant_id;
-        const { error } = await createNewConsultant(
-          updatedConsultant as Consultant
-        );
-        if (error) {
-          throw error;
-        }
-      } else {
-        const { error } = await updateConsultant(id, updatedConsultant);
-        if (error) {
-          throw error;
-        }
-      }
-
-      router.push('/consultants');
-    } catch (error) {
-      console.error('Error:', error);
-      setLoading(false);
-    }
-  };
-
-  const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    field: keyof Consultant
-  ) => {
-    if (field === 'name') {
-      setDuplicateError('');
-    }
-    const newValue = e.target.value;
-    setConsultant((prev) => ({
-      ...prev,
-      [field]: newValue,
-    }));
-    setValue(field as keyof FormData, newValue);
-    reset({ [field]: '' });
-  };
+    consultant,
+  } = useConsultantForm({ id });
 
   if (loading) return <LoadingSpinner />;
 
@@ -209,7 +51,7 @@ export function ConsultantForm({ id }: { id?: number }) {
           value={consultant?.phone}
           onChange={(e) => handleInputChange(e, 'phone')}
           required
-          error={!isSubmitted ? undefined : errors.phone?.message} // Only show errors after submission
+          error={!isSubmitted ? undefined : (errors.phone?.message as string)} // Only show errors after submission
         />
 
         <Input
@@ -221,7 +63,7 @@ export function ConsultantForm({ id }: { id?: number }) {
           value={consultant?.email}
           onChange={(e) => handleInputChange(e, 'email')}
           required
-          error={!isSubmitted ? undefined : errors.email?.message} // Only show errors after submission
+          error={!isSubmitted ? undefined : (errors.email?.message as string)} // Only show errors after submission
         />
 
         <Button type="submit">

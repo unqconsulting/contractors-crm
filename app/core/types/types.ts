@@ -36,4 +36,10 @@ export interface DropdownOption {
   label?: string;
 }
 
+export interface DropdownErrors {
+  clientError: string;
+  consultantError: string;
+  monthError: string;
+}
+
 export type InputSizeVariant = 'sm' | 'md' | 'lg';

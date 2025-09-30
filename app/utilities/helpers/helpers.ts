@@ -39,9 +39,9 @@ export const createConsultantAssignmentObject = (): ConsultantAssignment => {
 export const createConsultantObject = (): Consultant => {
   return {
     consultant_id: undefined,
-    name: undefined,
-    phone: undefined,
-    email: undefined,
+    name: '',
+    phone: '',
+    email: '',
   };
 };
 

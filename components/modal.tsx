@@ -6,7 +6,6 @@ import { Button } from './ui/button';
 interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onCancel: () => void;
   onDelete: () => void;
   title: string;
   children: React.ReactNode;
@@ -17,15 +16,12 @@ interface ModalProps {
 export default function Modal({
   isOpen,
   onClose,
-  onCancel,
   onDelete,
   children,
   title,
   showPrimaryButton = true,
   showSecondaryButton = true,
 }: ModalProps) {
-  // Close modal when pressing Escape key
-
   const secondaryButtonRef = (button: HTMLButtonElement | null) => {
     if (button) {
       button.focus();
@@ -69,7 +65,7 @@ export default function Modal({
             <div className="mt-6 flex justify-end">
               {showSecondaryButton && (
                 <Button
-                  onClick={onCancel}
+                  onClick={onClose}
                   variant="secondary"
                   className="px-4 py-2 mr-2 bg-gray-200 text-black hover:bg-gray-200/50 focus:outline-none focus:ring-1 focus:ring-black focus:ring-offset-2 focus-visible:ring-black"
                   ref={secondaryButtonRef}

@@ -1,111 +1,20 @@
 'use client';
-import { useEffect, useState } from 'react';
-import { getConsultantsAssignments } from '../../core/queries/consult-assignment-queries';
-import { ConsultantAssignment } from '../../core/types/types';
-import { deleteConsultantAssignment } from '../../core/commands/consult-assignment-commands';
 import Modal from '@/components/modal';
 import { CustomTable } from '@/components/custom-table';
 import CustomLink from '@/components/ui/link';
 import { LoadingSpinner } from '@/components/ui/spinner';
-import { getAssignmentMonth } from '@/app/utilities/helpers/helpers';
-import { useRouter } from 'next/navigation';
-import { useAuth } from '@/app/providers/authProvider';
+import { useConsultantAssignments } from '@/app/hooks/useConsultantAssignments';
 
 export default function Page() {
-  const [assignments, setAssignments] = useState<
-    ConsultantAssignment[] | undefined
-  >(undefined);
-  const [loading, setLoading] = useState(true);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedAssignment, setSelectedAssignment] =
-    useState<ConsultantAssignment | null>();
-  const { user } = useAuth();
-  const router = useRouter();
-  const columns = [
-    'Consultant name',
-    'Client',
-    'Partner',
-    'Hourly rate consultant',
-    'Hourly rate client',
-    'Hours worked',
-    'Month',
-    'Total revenue',
-    'Profit',
-    'Margin',
-  ];
-
-  useEffect(() => {
-    let ignore = false;
-    const fetchConsultantsAssignments = async () => {
-      if (!user) router.push('/auth/login');
-      const { data: assignments, error } = await getConsultantsAssignments();
-      if (error) {
-        console.error('Error fetching assignments:', error);
-      } else {
-        if (ignore) return;
-        setAssignments(assignments);
-      }
-      setLoading(false);
-    };
-    fetchConsultantsAssignments();
-    return () => {
-      ignore = true;
-    };
-  }, [router, user]);
-
-  const openModal = (rowIndex: number) => {
-    setIsModalOpen(true);
-    setSelectedAssignment(assignments ? assignments[rowIndex] : null);
-  };
-
-  assignments?.sort((a, b) => {
-    if (a.month && b.month) {
-      if (+a?.month > +b?.month) {
-        return 1;
-      } else if (+a?.month === +b?.month) return 0;
-    }
-    return -1;
-  });
-
-  const rows = assignments
-    ? assignments.map((assignment) => {
-        return {
-          id: assignment.assignment_id,
-          detailsId: assignment.consultant_id,
-          values: [
-            assignment.consultant?.name,
-            assignment.client?.name,
-            assignment.partner?.name,
-            assignment.cost_fulltime,
-            assignment.hourly_rate,
-            assignment.hours_worked,
-            getAssignmentMonth(assignment.month ?? ''),
-            assignment.total_revenue,
-            assignment.profit,
-            assignment.margin_percent + ' %',
-          ],
-        };
-      })
-    : [];
-
-  const deleteA = async () => {
-    setIsModalOpen(false);
-    if (selectedAssignment == null) return;
-    const { data, error } = await deleteConsultantAssignment(
-      selectedAssignment?.assignment_id as number
-    );
-    if (error) {
-      console.error('Error deleting assigment:', error);
-    } else {
-      setAssignments(
-        assignments?.filter(
-          (assignment) =>
-            assignment.assignment_id !== selectedAssignment.assignment_id
-        )
-      );
-      console.log('Assigment deleted:', data);
-    }
-  };
+  const {
+    loading,
+    rows,
+    columns,
+    isModalOpen,
+    openModal,
+    closeModal,
+    deleteAssignment,
+  } = useConsultantAssignments();
 
   if (loading) return <LoadingSpinner />;
 
@@ -123,9 +32,8 @@ export default function Page() {
       </CustomLink>
       <Modal
         isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        onCancel={() => setIsModalOpen(false)}
-        onDelete={deleteA}
+        onClose={closeModal}
+        onDelete={deleteAssignment}
         title="Delete assigment"
       >
         <p>Are you sure you want to delete the assigment?</p>

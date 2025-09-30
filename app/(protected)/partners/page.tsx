@@ -1,64 +1,21 @@
 'use client';
-import { useEffect, useState } from 'react';
-import { getPartners } from '../../core/queries/partner-queries';
-import { deletePartner } from '../../core/commands/partner-commands';
-import { Partner } from '../../core/types/types';
 import Modal from '@/components/modal';
 import { CustomTable } from '@/components/custom-table';
 import CustomLink from '@/components/ui/link';
 import { LoadingSpinner } from '@/components/ui/spinner';
-import { sortByName } from '@/app/utilities/helpers/helpers';
-import { useAuth } from '@/app/providers/authProvider';
-import { useRouter } from 'next/navigation';
+import { useClientsOrPartners } from '@/app/hooks/useClientsOrPartners';
 
 export default function Page() {
-  const [partners, setPartners] = useState<Partner[] | undefined>(undefined);
-  const [loading, setLoading] = useState(true);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [partner, setSelectedPartner] = useState<Partner | null>();
-  const [errorDelete, setErrorDelete] = useState<boolean>(false);
-  const { user } = useAuth();
-  const router = useRouter();
-
-  useEffect(() => {
-    const fetchPartners = async () => {
-      if (!user) router.push('/auth/login');
-      const partners = await getPartners();
-      setPartners(partners);
-
-      setLoading(false);
-    };
-    fetchPartners();
-  }, [router, user]);
-
-  if (partners) sortByName(partners);
-
-  const rows = partners
-    ? partners.map((partner) => {
-        return {
-          id: partner.partner_id,
-          values: [partner.name],
-        };
-      })
-    : [];
-
-  const openModal = (rowIndex: number) => {
-    setIsModalOpen(true);
-    setSelectedPartner(partners ? partners[rowIndex] : null);
-  };
-
-  const deleteP = async () => {
-    if (partner == null) return;
-    const { error } = await deletePartner(partner?.partner_id as number);
-
-    if (error) {
-      console.error('Error deleting partner:', error);
-      setErrorDelete(true);
-    } else {
-      setPartners(partners?.filter((p) => p.partner_id !== partner.partner_id));
-      setIsModalOpen(false);
-    }
-  };
+  const {
+    loading,
+    isOpen,
+    errorDelete,
+    selectedPartner: partner,
+    rows,
+    openModal,
+    closeModal,
+    removeSelectedItem,
+  } = useClientsOrPartners(true);
 
   if (loading) return <LoadingSpinner />;
 
@@ -74,10 +31,9 @@ export default function Page() {
         Create new partner
       </CustomLink>
       <Modal
-        isOpen={isModalOpen}
-        onClose={() => (setIsModalOpen(false), setErrorDelete(false))}
-        onCancel={() => (setIsModalOpen(false), setErrorDelete(false))}
-        onDelete={deleteP}
+        isOpen={isOpen}
+        onClose={closeModal}
+        onDelete={removeSelectedItem}
         title="Delete partner"
         showPrimaryButton={!errorDelete}
       >

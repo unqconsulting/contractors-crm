@@ -1,8 +1,3 @@
-import { useAssignmentStore } from '@/app/core/stores/assignment-store';
-import { useAuthStore } from '@/app/core/stores/auth-store';
-import { useClientStore } from '@/app/core/stores/client-store';
-import { useConsultantStore } from '@/app/core/stores/consultant-store';
-import { usePartnerStore } from '@/app/core/stores/partner-store';
 import {
   Client,
   Consultant,
@@ -99,17 +94,4 @@ export const sortByName = (list: Client[] | Partner[] | Consultant[]) => {
     }
     return -1;
   });
-};
-
-export const clearStores = () => {
-  const { clearClients } = useClientStore.getState();
-  const { clearPartners } = usePartnerStore.getState();
-  const { clearConsultants } = useConsultantStore.getState();
-  const { clearAssignments } = useAssignmentStore.getState();
-  const { clearAuth } = useAuthStore.getState();
-  clearClients();
-  clearPartners();
-  clearConsultants();
-  clearAssignments();
-  clearAuth();
 };

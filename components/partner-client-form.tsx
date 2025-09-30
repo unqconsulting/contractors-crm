@@ -21,9 +21,6 @@ import {
   updateClient,
 } from '@/app/core/commands/client-commands';
 import { checkName } from '@/app/utilities/helpers/helpers';
-import { usePartnerStore } from '@/app/core/stores/partner-store';
-import { useClientStore } from '@/app/core/stores/client-store';
-import { useAssignmentStore } from '@/app/core/stores/assignment-store';
 
 export default function CreateOrUpdatePartnerOrClient({
   id,
@@ -41,11 +38,6 @@ export default function CreateOrUpdatePartnerOrClient({
   >([]);
   const errorMessage =
     (isPartner ? 'Partner ' : 'Client ') + 'with this name already exists';
-
-  const { addStorePartner, updateStorePartner } = usePartnerStore();
-  const { addStoreClient, updateStoreClient } = useClientStore();
-  const { updateAssignmentClient, updateAssignmentPartner } =
-    useAssignmentStore();
 
   useEffect(() => {
     const fetchAll = async () => {
@@ -89,7 +81,7 @@ export default function CreateOrUpdatePartnerOrClient({
       return;
     }
 
-    const { data, error } = isPartner
+    const { error } = isPartner
       ? await createNewPartner(inputName)
       : await createNewClient(inputName);
 
@@ -97,10 +89,8 @@ export default function CreateOrUpdatePartnerOrClient({
       console.error('Error adding partner:', error);
     } else {
       if (isPartner) {
-        addStorePartner(data as Partner);
         router.push('/partners');
       } else {
-        addStoreClient(data as Client);
         router.push('/customers');
       }
     }
@@ -113,7 +103,7 @@ export default function CreateOrUpdatePartnerOrClient({
       setDuplicateError(errorMessage);
       return;
     }
-    const { data, error } = isPartner
+    const { error } = isPartner
       ? await updatePartner(id as number, inputName)
       : await updateClient(id as number, inputName);
 
@@ -121,12 +111,8 @@ export default function CreateOrUpdatePartnerOrClient({
       console.error('Error updating partner:', error);
     } else {
       if (isPartner) {
-        updateStorePartner(data as Partner);
-        updateAssignmentPartner(data as Partner);
         router.push('/partners');
       } else {
-        updateStoreClient(data as Client);
-        updateAssignmentClient(data as Client);
         router.push('/customers');
       }
     }

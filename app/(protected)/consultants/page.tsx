@@ -1,80 +1,25 @@
 'use client';
-import { useEffect, useState } from 'react';
-import { getConsultants } from '../../core/queries/consultant-queries';
-import { deleteConsultant } from '../../core/commands/consultants-commands';
-import { Consultant } from '../../core/types/types';
 import Modal from '@/components/modal';
 import { CustomTable } from '@/components/custom-table';
 import CustomLink from '@/components/ui/link';
 import { LoadingSpinner } from '@/components/ui/spinner';
-import { sortByName } from '@/app/utilities/helpers/helpers';
-import { useConsultantStore } from '@/app/core/stores/consultant-store';
+import { useConsultants } from '@/app/hooks/useConsultants';
 
 export default function Page() {
-  const [consultants, setConsultants] = useState<Consultant[] | undefined>(
-    undefined
-  );
-  const [loading, setLoading] = useState(true);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedConsultant, setSelectedConsultant] =
-    useState<Consultant | null>();
-  const [errorDelete, setErrorDelete] = useState<boolean>(false);
-  const { allConsultants, setAllConsultants, deleteStoreConsultant } =
-    useConsultantStore();
-
-  useEffect(() => {
-    const fetch = async () => {
-      if ((!allConsultants || allConsultants.length === 0) && !consultants) {
-        const consultants = await getConsultants();
-        setConsultants(consultants);
-        setAllConsultants(consultants);
-      } else {
-        setConsultants(allConsultants);
-      }
-      setLoading(false);
-    };
-    fetch();
-  }, [allConsultants, setAllConsultants, consultants]);
-
-  const columns = ['Name', 'Phone number', 'Email'];
-  if (consultants) {
-    sortByName(consultants);
-  }
-  const rows = consultants
-    ? consultants.map((consultant) => {
-        return {
-          id: consultant.consultant_id,
-          values: [consultant.name, consultant.phone, consultant.email],
-        };
-      })
-    : [];
-  const openModal = (rowIndex: number) => {
-    setIsModalOpen(true);
-    setSelectedConsultant(consultants ? consultants[rowIndex] : null);
-  };
-
-  const deleteC = async () => {
-    if (selectedConsultant == null) return;
-    const { error } = await deleteConsultant(
-      selectedConsultant?.consultant_id as number
-    );
-
-    if (error) {
-      setErrorDelete(true);
-      console.error('Error deleting consultant:', error);
-    } else {
-      deleteStoreConsultant(selectedConsultant.consultant_id as number);
-      setConsultants(
-        consultants?.filter(
-          (consultant) =>
-            consultant.consultant_id !== selectedConsultant.consultant_id
-        )
-      );
-      setIsModalOpen(false);
-    }
-  };
+  const {
+    loading,
+    isModalOpen,
+    errorDelete,
+    rows,
+    columns,
+    selectedConsultant,
+    openModal,
+    closeModal,
+    removeConsultant,
+  } = useConsultants();
 
   if (loading) return <LoadingSpinner />;
+
   return (
     <>
       <CustomTable
@@ -89,9 +34,8 @@ export default function Page() {
       </CustomLink>
       <Modal
         isOpen={isModalOpen}
-        onClose={() => (setIsModalOpen(false), setErrorDelete(false))}
-        onCancel={() => (setIsModalOpen(false), setErrorDelete(false))}
-        onDelete={deleteC}
+        onClose={closeModal}
+        onDelete={removeConsultant}
         title="Delete consultant"
         showPrimaryButton={!errorDelete}
       >

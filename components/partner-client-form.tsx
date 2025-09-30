@@ -81,7 +81,7 @@ export default function CreateOrUpdatePartnerOrClient({
       return;
     }
 
-    const { data, error } = isPartner
+    const { error } = isPartner
       ? await createNewPartner(inputName)
       : await createNewClient(inputName);
 

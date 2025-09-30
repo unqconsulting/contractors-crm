@@ -12,7 +12,7 @@ import {
 } from '@/components/ui/card';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { clearStores } from '@/app/utilities/helpers/helpers';
+import { useAuth } from '@/app/providers/authProvider';
 
 export function LoginForm({
   className,
@@ -21,11 +21,13 @@ export function LoginForm({
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+  const { setProviderLoading } = useAuth();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     setError(null);
+    setProviderLoading(true);
     try {
       await supabase.auth.signInWithOAuth({
         provider: 'azure',
@@ -33,7 +35,6 @@ export function LoginForm({
           scopes: 'email',
         },
       });
-      clearStores();
       router.push('/');
     } catch (error: unknown) {
       setError(error instanceof Error ? error.message : 'An error occurred');

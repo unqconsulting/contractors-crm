@@ -31,7 +31,7 @@ export function ConsultantForm({ id }: { id?: number }) {
           ? 'Fill in the form below to create a new consultant.'
           : 'Update the consultant below'}
       </p>
-      <form onSubmit={handleSubmit(createOrUpdate)}>
+      <form onSubmit={handleSubmit(createOrUpdate)} role="form">
         <Input
           placeholder="Consultant Name"
           type="text"

@@ -48,10 +48,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           setUser(user);
           setProviderLoading(false);
         } else {
+          setProviderLoading(false);
           router.push('/auth/login');
         }
       } catch (error) {
         console.error('Auth check failed:', error);
+        setProviderLoading(false);
         router.push('/auth/login');
       }
     };

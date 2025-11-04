@@ -23,7 +23,7 @@ export default function CreateOrUpdatePartnerOrClient({
 
   return (
     <>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} role="form">
         <CustomLink
           href={isPartner ? '/partners' : '/customers'}
           className="mb-2 px-0"

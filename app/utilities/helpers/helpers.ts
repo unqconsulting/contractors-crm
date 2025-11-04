@@ -91,7 +91,8 @@ export const sortByName = (list: Client[] | Partner[] | Consultant[]) => {
       if (a?.name.toLowerCase() > b?.name.toLowerCase()) {
         return 1;
       } else if (a?.name.toLowerCase() === b?.name.toLowerCase()) return 0;
-    }
+    } else if (a.name === '') return 1;
+    else if (b.name === '') return -1;
     return -1;
   });
 };

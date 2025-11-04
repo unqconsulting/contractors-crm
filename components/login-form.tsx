@@ -53,7 +53,7 @@ export function LoginForm({
           <CardDescription>To manage UNQ subcontractors</CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleLogin}>
+          <form onSubmit={handleLogin} role="form">
             <div className="flex flex-col gap-6">
               {error && <p className="text-sm text-red-500">{error}</p>}
               <Button type="submit" className="w-full" disabled={isLoading}>

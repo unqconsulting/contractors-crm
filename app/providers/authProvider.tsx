@@ -46,12 +46,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             data: { user },
           } = await supabase.auth.getUser();
           setUser(user);
-          setProviderLoading(false);
         } else {
           router.push('/auth/login');
         }
       } catch (error) {
         console.error('Auth check failed:', error);
+        setProviderLoading(false);
         router.push('/auth/login');
       }
     };

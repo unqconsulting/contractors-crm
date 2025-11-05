@@ -1,7 +1,10 @@
 export function LoadingSpinner() {
   return (
     <>
-      <div className="grid min-h-[140px] w-full place-items-center  rounded-lg p-6 lg:overflow-visible">
+      <div
+        role="status"
+        className="grid min-h-[140px] w-full place-items-center  rounded-lg p-6 lg:overflow-visible"
+      >
         <div className="flex items-end gap-8">
           <svg
             className="w-12 h-12 text-gray-300 animate-spin"

@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import Dropdown from './ui/dropdown';
 import CustomLink from './ui/link';
 import { LoadingSpinner } from './ui/spinner';
-import { useAssignmentForm } from '@/app/hooks/useAssignmentForm';
+import { useAssignmentForm } from '../app/hooks/useAssignmentForm';
 
 export function UpdateOrCreateConsultantAssignment({
   id,
@@ -54,7 +54,7 @@ export function UpdateOrCreateConsultantAssignment({
           'Fill in the form below to create a new consultant assignment.'
         )}
       </div>
-      <form onSubmit={createOrUpdate}>
+      <form onSubmit={createOrUpdate} role="form">
         <Dropdown
           options={consultants}
           onSelect={(val) => {

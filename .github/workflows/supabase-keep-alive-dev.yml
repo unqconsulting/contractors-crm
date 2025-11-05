@@ -1,0 +1,34 @@
+name: Keep Supabase Alive
+
+on:
+  schedule:
+    - cron: "0 12 */4 * *" # Kör kl 12:00 var 4:e dag
+  workflow_dispatch: # Möjlighet att köra manuellt
+
+jobs:
+  keep-alive:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Supabase REST API
+        run: |
+          curl -s -X GET "https://${{ secrets.DEV_NEXT_PUBLIC_SUPABASE_URL }}/rest/v1/Clients?select=*" \
+          -H "apikey: ${{ secrets.DEV_NEXT_PUBLIC_SUPABASE_ANON_KEY }}" \
+          -H "Authorization: Bearer ${{ secrets.DEV_SUPABASE_SERVICE_ROLE_KEY }}" \
+          -H "Content-Type: application/json"
+
+# name: Keep Supabase Alive
+
+# on:
+#   schedule:
+#     - cron: '0 12 */4 * *'  # 12:00 UTC var 4:e dag
+#   workflow_dispatch:
+
+# jobs:
+#   ping-supabase:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Ping Supabase
+#         run: |
+#           curl -s -o /dev/null -w "HTTP Status: %{http_code}\n" \
+#           "https://${{ secrets.SUPABASE_PROJECT_REF }}.supabase.co/rest/v1/" \
+#           -H "apikey: ${{ secrets.DEV_NEXT_PUBLIC_SUPABASE_ANON_KEY }}"

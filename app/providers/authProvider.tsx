@@ -46,9 +46,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             data: { user },
           } = await supabase.auth.getUser();
           setUser(user);
-          setProviderLoading(false);
         } else {
-          setProviderLoading(false);
           router.push('/auth/login');
         }
       } catch (error) {

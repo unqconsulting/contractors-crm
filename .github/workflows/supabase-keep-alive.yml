@@ -2,7 +2,7 @@ name: Keep Supabase Alive
 
 on:
   schedule:
-    - cron: "0 12 */4 * *" # Kör kl 12:00 var 4:e dag
+    - cron: "0 12 */1 * *" # Kör kl 12:00 var 1:e dag
   workflow_dispatch: # Möjlighet att köra manuellt
   push:
     branches:

@@ -2,18 +2,41 @@ name: Keep Supabase Alive
 
 on:
   schedule:
-    - cron: "0 12 */1 * *" # Kör kl 12:00 var 1:e dag
-  workflow_dispatch: # Möjlighet att köra manuellt
+    - cron: "0 * * * *" # Run at minute 0 of every hour (every hour)
+  workflow_dispatch: # Manual trigger option
   push:
     branches:
       - main
+
 jobs:
   keep-alive:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        # Define multiple endpoints or call types
+        call_type: [clients, partners, consultants, consultantAssignments]
+        # Or if you want multiple identical calls:
+        call_count: [1, 2, 3]
     steps:
-      - name: Ping Supabase REST API
+      - name: Ping Supabase REST API - ${{ matrix.call_type }}
         run: |
-          curl -s -X GET "${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}/rest/v1/Clients?select=*" \
+          # Different endpoints for variety, or same endpoint multiple times
+          if [ "${{ matrix.call_type }}" == "clients" ]; then
+            ENDPOINT="Clients"
+          elif [ "${{ matrix.call_type }}" == "partners" ]; then
+            ENDPOINT="Partners"
+          elif [ "${{ matrix.call_type }}" == "consultants" ]; then
+            ENDPOINT="Consultants"
+          elif [ "${{ matrix.call_type }}" == "consultantAssignments" ]; then
+            ENDPOINT="ConsultantAssignments"
+          else
+            ENDPOINT="Clients" # Default fallback
+          fi
+
+          curl -s -X GET "${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}/rest/v1/${ENDPOINT}?select=*&limit=1" \
           -H "apikey: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}" \
           -H "Authorization: Bearer ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}" \
-          -H "Content-Type: application/json"
+          -H "Content-Type: application/json" \
+          -H "Prefer: count=exact"
+
+          echo "Call ${{ matrix.call_type }} completed at $(date)"
